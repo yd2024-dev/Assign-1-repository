@@ -11,30 +11,31 @@ export interface Book {
 
 const booksFilePath = path.join(__dirname, '../mcmasteful-book-list.json');
 
+// Function to read books from the JSON file
 const getBooks = (): Promise<Book[]> => {
     return new Promise((resolve, reject) => {
         fs.readFile(booksFilePath, 'utf8', (err, data) => {
             if (err) {
                 return reject(err);
             }
-            const books: Book[] = JSON.parse(data);
-            resolve(books);
+            try {
+                const books: Book[] = JSON.parse(data);
+                resolve(books);
+            } catch (parseError) {
+                reject(new Error('Error parsing JSON data'));
+            }
         });
     });
 };
 
-export async function listBooks(filters?: Array<{ from?: number; to?: number }>): Promise<Book[]> {
+// Function to list books with optional price filters
+export const listBooks = async (fromPrice?: number, toPrice?: number): Promise<Book[]> => {
     const books = await getBooks();
 
-    if (!filters || filters.length === 0) {
-        return books; // No filters, return all books
-    }
-
+    // Filter books based on price range if provided
     return books.filter(book => {
-        return filters.some(filter => {
-            const from = filter.from !== undefined ? filter.from : 0;
-            const to = filter.to !== undefined ? filter.to : Infinity;
-            return book.price >= from && book.price <= to;
-        });
+        const withinFromPrice = fromPrice !== undefined ? book.price >= fromPrice : true;
+        const withinToPrice = toPrice !== undefined ? book.price <= toPrice : true;
+        return withinFromPrice && withinToPrice;
     });
-}
+};
