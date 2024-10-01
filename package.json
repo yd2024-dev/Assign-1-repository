@@ -4,6 +4,7 @@
     "@koa/router": "^13.1.0",
     "koa": "^2.15.3",
     "koa-bodyparser": "^4.4.1",
+    "koa-send": "^5.0.1",
     "mongodb": "^6.9.0"
   },
   "devDependencies": {

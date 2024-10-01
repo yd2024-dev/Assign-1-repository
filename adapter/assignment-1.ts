@@ -28,9 +28,20 @@ const getBooks = (): Promise<Book[]> => {
     });
 };
 
+// Function to validate price input
+const validatePrice = (price?: number): void => {
+    if (price !== undefined && typeof price !== 'number') {
+        throw new Error('Price must be a number');
+    }
+};
+
 // Function to list books with optional price filters
 export const listBooks = async (fromPrice?: number, toPrice?: number): Promise<Book[]> => {
     const books = await getBooks();
+
+    // Validate price inputs
+    validatePrice(fromPrice);
+    validatePrice(toPrice);
 
     // Filter books based on price range if provided
     return books.filter(book => {

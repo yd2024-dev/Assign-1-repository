@@ -1,23 +1,23 @@
 import Koa from 'koa';
 import Router from '@koa/router';
 import bodyParser from 'koa-bodyparser';
-import send from 'koa-send'; // Import koa-send
 import { listBooks } from '../adapter/assignment-1'; // Ensure this path is correct
 
 const app = new Koa();
 const router = new Router();
 
+// Handle root route
+//router.get('/', async (ctx) => {
+  //  ctx.status = 404; // Set status to 404
+   // ctx.body = { message: 'Not Found' }; // Response body
+router.get('/', (ctx) => {
+    ctx.body = { message: 'Welcome to the McMasterful Books API!' };
+});
+
+
 // Middleware
 app.use(bodyParser());
 
-// Route to serve index.html
-app.use(async (ctx, next) => {
-    if (ctx.path === '/') {
-        await send(ctx, 'index.html'); // Serve index.html from root
-    } else {
-        await next(); // Proceed to the next middleware
-    }
-});
 
 // Route to get all books
 router.get('/api/books', async (ctx) => {

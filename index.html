@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>McMasterful Books</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #333; }
-        .book { margin-bottom: 20px; border: 1px solid #ddd; padding: 10px; border-radius: 5px; }
+        body { font-family: Arial, sans-serif; }
+        .book { margin-bottom: 20px; }
         .book img { max-width: 100px; }
-        .filter { margin-bottom: 20px; }
+        .test-case { margin-top: 20px; }
+        .test-case h3 { margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <h1>McMasterful Books</h1>
     
-    <div class="filter">
+    <div>
         <label for="fromPrice">From Price:</label>
         <input type="number" id="fromPrice" placeholder="0" />
         
@@ -24,8 +24,18 @@
         
         <button id="filterButton">Filter Books</button>
     </div>
-    
+
     <div id="bookList"></div>
+
+    <div class="test-case">
+        <h3>Test Cases</h3>
+        <button onclick="fetchBooks(0, 50)">Test Case 1: Price between $0 and $50</button>
+        <button onclick="fetchBooks(51, 100)">Test Case 2: Price between $51 and $100</button>
+        <button onclick="fetchBooks(100, 200)">Test Case 3: Price between $100 and $200</button>
+        <button onclick="fetchBooks(-10, 50)">Test Case 4: Invalid Price Range (-10 to $50)</button>
+        <button onclick="fetchBooks(0, -10)">Test Case 5: Invalid Price Range ($0 to -10)</button>
+        <button onclick="fetchBooks()">Reset Filters</button>
+    </div>
 
     <script>
         const fetchBooks = async (from, to) => {
@@ -33,15 +43,9 @@
             if (from || to) {
                 url += `?from=${from || ''}&to=${to || ''}`;
             }
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const books = await response.json();
-                displayBooks(books);
-            } catch (error) {
-                console.error('Error fetching books:', error);
-                alert('Failed to fetch books. Please try again later.');
-            }
+            const response = await fetch(url);
+            const books = await response.json();
+            displayBooks(books.data || []);
         };
 
         const displayBooks = (books) => {
@@ -49,7 +53,7 @@
             bookList.innerHTML = ''; // Clear previous books
             
             if (books.length === 0) {
-                bookList.innerHTML = '<p>No books found for the selected price range.</p>';
+                bookList.innerHTML = '<p>No books found.</p>';
                 return;
             }
 
